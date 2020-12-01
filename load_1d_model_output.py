@@ -117,11 +117,17 @@ def load_1d_model_output(run_path, time_range=[np.nan, np.nan],
 
 #---------------------------------------------------------------------------------------------------------------
 
-def init_load_1d_model_output(**kwargs):
+def init_load_1d_model_output(sim_version=True, **kwargs):
     """
     This method checks whether output field["names"] other then the default were requested
     and sets them accordingly (note that if names are different, "long_name" and "units" 
     should be different as well).
+
+    Parameters
+    ----------
+    sim_version:
+        If True then using the simulator version mc output namelist order. Non-simulator
+        version should still be updated.
     """
     out_info = {}
     # -------------------------------------init prof------------------------------------
@@ -242,20 +248,38 @@ def init_load_1d_model_output(**kwargs):
     out_info["mc"] = {}
     if 'out_mc_names' in kwargs.keys():
         out_info["mc"]["names"] = kwargs['out_mc_names']
+    elif sim_version is True:
+        out_info["mc"]["names"] = ["zm", "rt", "rvap", "rcld", "rrain", "rpice", "rsnow", "raggr",
+                           "rgrau", "rhail", "cpice", "amean", "cmean", "rhoiavg", "aspect",
+                           "vthabn", "vthabm", "dmdtvap", "ssi", "zdr", "zh",
+                           "drpp_dep", "drpp_sedim", "drrp_sedim", "drrp_collect", "drt_horizAdv",
+                           "drc_ncphys", "drv_mcphys", "drc_turb", "drv_turb", "dthil_subs", "drt_subs"]
     else:
         out_info["mc"]["names"] = ["zm", "rt", "rvap", "rcld", "rrain", "rpice", "rsnow", "raggr",
                            "rgrau", "rhail", "cpice", "amean", "cmean", "rhoiavg", "aspect",
-                           "vthabn", "vthabm", "dmtvap" ,"ssi", "drpp_dep", "drpp_sedim",
+                           "vthabn", "vthabm", "dmdtvap" ,"ssi", "drpp_dep", "drpp_sedim",
                            "drrp_sedim", "drrp_collect", "drt_horizAdv", "drc_ncphys",
                            "drv_mcphys", "drc_turb", "drv_turb", "dthil_subs", "drt_subs"]
     if 'out_mc_units' in kwargs.keys():
         out_info["mc"]["units"] = kwargs['out_mc_units']
+    elif sim_version is True:
+        out_info["mc"]["units"] = {"zm": "m", "rt": "kg/kg", "rvap": "kg/kg", "rcld": "kg/kg",
+                           "rrain": "kg/kg", "rpice": "kg/kg", "rsnow": "kg/kg", "raggr": "kg/kg",
+                           "rgrau": "kg/kg", "rhail": "kg/kg", "cpice": "m^{-3}", "amean": "\mu m",
+                           "cmean": "\mu m", "rhoiavg": "kg m^{-3}", "aspect": "", "vthabn": "m/s",
+                           "vthabm": "m/s", "dmdtvap": "-" ,"ssi": "-", "zdr": "dB", "zh": "dBZ",
+                           "drpp_dep": "kg kg^{-1} s^{-1}", "drpp_sedim": "kg kg^{-1} s^{-1}",
+                           "drrp_sedim": "kg kg^{-1} s^{-1}", "drrp_collect": "kg kg^{-1} s^{-1}",
+                           "drt_horizAdv": "kg kg^{-1} s^{-1}", "drc_ncphys": "kg kg^{-1} s^{-1}",
+                           "drv_mcphys": "kg kg^{-1} s^{-1}", "drc_turb": "kg kg^{-1} s^{-1}",
+                           "drv_turb": "kg kg^{-1} s^{-1}", "dthil_subs": "K s^{-1}",
+                           "drt_subs": "kg kg^{-1} s^{-1}"}
     else:
         out_info["mc"]["units"] = {"zm": "m", "rt": "kg/kg", "rvap": "kg/kg", "rcld": "kg/kg",
                            "rrain": "kg/kg", "rpice": "kg/kg", "rsnow": "kg/kg", "raggr": "kg/kg",
                            "rgrau": "kg/kg", "rhail": "kg/kg", "cpice": "m^{-3}", "amean": "\mu m",
                            "cmean": "\mu m", "rhoiavg": "kg m^{-3}", "aspect": "", "vthabn": "m/s",
-                           "vthabm": "m/s", "dmtvap": "-" ,"ssi": "-",
+                           "vthabm": "m/s", "dmdtvap": "-" ,"ssi": "-",
                            "drpp_dep": "kg kg^{-1} s^{-1}", "drpp_sedim": "kg kg^{-1} s^{-1}",
                            "drrp_sedim": "kg kg^{-1} s^{-1}", "drrp_collect": "kg kg^{-1} s^{-1}",
                            "drt_horizAdv": "kg kg^{-1} s^{-1}", "drc_ncphys": "kg kg^{-1} s^{-1}",
@@ -265,6 +289,32 @@ def init_load_1d_model_output(**kwargs):
 
     if 'out_mc_long_name' in kwargs.keys():
         out_info["mc"]["long_name"] = kwargs['out_mc_long_name']
+    elif sim_version is True:
+        out_info["mc"]["long_name"] = {"zm": "Mean grid height", "rt": "Total mixing ratio",
+                               "rvap": "Vapor mixing ratio", "rcld": "Cloud water mixing ratio",
+                               "rrain": "Rain water mixing ratio",
+                               "rpice": "Pristine ice mixing ratio", "rsnow": "Snow mixing ratio",
+                               "raggr": "Aggregate mixing raito",
+                               "rgrau": "graupel mixing ratio", "rhail": "hail mixing ratio",
+                               "cpice": "Ice number concentration",
+                               "amean": "mean a-axis length", "cmean": "mean a-axis length",
+                               "rhoiavg": "Mean ice density", "aspect": "Aspect ratio",
+                               "vthabn": "Number weighted terminal fall speed",
+                               "vthabm": "Mass weighted terminal velocity",
+                               "dmdtvap": "Vapor growth rate", "ssi": "Ice supersaturation",
+                               "zdr": "Differential reflectivity factor (Radar)",
+                               "zh": "Horizontally-polarized reflectivity factor (Radar)",
+                               "drpp_dep": "Tendencies for depositional growth of pristine ice",
+                               "drpp_sedim": "Tendencies for sedimentation of pristine ice",
+                               "drrp_sedim": "Tendencies for sedimentation of rain",
+                               "drrp_collect": "Tendencies for collection of cloud into rain",
+                               "drt_horizAdv": "Tendencies in rt due to horizontal advection",
+                               "drc_ncphys": "Tendencies in rc due to microphysics",
+                               "drv_mcphys": "Tendencies in rv due to microphysics",
+                               "drc_turb": "Tendencies in rc due to turbulence",
+                               "drv_turb": "Tendencies in rv due to turbulence",
+                               "dthil_subs": "Tendencies in thetail due to subsidence",
+                               "drt_subs": "Tendencies in rt due to subsidence"}
     else:
         out_info["mc"]["long_name"] = {"zm": "Mean grid height", "rt": "Total mixing ratio",
                                "rvap": "Vapor mixing ratio", "rcld": "Cloud water mixing ratio",
@@ -277,7 +327,7 @@ def init_load_1d_model_output(**kwargs):
                                "rhoiavg": "Mean ice density", "aspect": "Aspect ratio",
                                "vthabn": "Number weighted terminal fall speed",
                                "vthabm": "Mass weighted terminal velocity",
-                               "dmtvap": "-", "ssi": "Ice supersaturation",
+                               "dmdtvap": "Vapor growth rate", "ssi": "Ice supersaturation",
                                "drpp_dep": "Tendencies for depositional growth of pristine ice",
                                "drpp_sedim": "Tendencies for sedimentation of pristine ice",
                                "drrp_sedim": "Tendencies for sedimentation of rain",
@@ -292,6 +342,21 @@ def init_load_1d_model_output(**kwargs):
 
     if 'out_mc_scale' in kwargs.keys():
         out_info["mc"]["scale"] = kwargs['out_mc_scale']
+    elif sim_version is True:
+        out_info["mc"]["scale"] = {"zm": "linear", "rt": "linear", "rvap": "linear",
+                           "rcld": "log",
+                           "rrain": "log", "rpice": "log", "rsnow": "log", "raggr": "log",
+                           "rgrau": "log", "rhail": "log", "cpice": "log", "amean": "log",
+                           "cmean": "log", "rhoiavg": "linear", "aspect": "linear",
+                           "vthabn": "linear",
+                           "vthabm": "linear", "dmdtvap": "linear" ,"ssi": "linear",
+                           "zdr": "linear", "zh", "linear",
+                           "drpp_dep": "symlog", "drpp_sedim": "log",
+                           "drrp_sedim": "log", "drrp_collect": "log",
+                           "drt_horizAdv": "symlog", "drc_ncphys": "symlog",
+                           "drv_mcphys": "symlog", "drc_turb": "symlog",
+                           "drv_turb": "symlog", "dthil_subs": "linear",
+                           "drt_subs": "symlog"}
     else:
         out_info["mc"]["scale"] = {"zm": "linear", "rt": "linear", "rvap": "linear",
                            "rcld": "log",
@@ -299,7 +364,7 @@ def init_load_1d_model_output(**kwargs):
                            "rgrau": "log", "rhail": "log", "cpice": "log", "amean": "log",
                            "cmean": "log", "rhoiavg": "linear", "aspect": "linear",
                            "vthabn": "linear",
-                           "vthabm": "linear", "dmtvap": "linear" ,"ssi": "linear",
+                           "vthabm": "linear", "dmdtvap": "linear" ,"ssi": "linear",
                            "drpp_dep": "symlog", "drpp_sedim": "log",
                            "drrp_sedim": "log", "drrp_collect": "log",
                            "drt_horizAdv": "symlog", "drc_ncphys": "symlog",
